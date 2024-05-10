@@ -9,7 +9,8 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 
 # Loading the dataset
-ds = pd.read_excel('./Projects/Online Retail.xlsx')
+ds = pd.read_excel('./data/Online_Retail.xlsx')
+ds.info()
 ds.head()
 
 # Data cleaning
@@ -104,6 +105,7 @@ for num_clusters in range_n_clusters:
 #kmeans.fit(rfm_ds_scaled)
 #print(kmeans.labels_)
 
+'''Feature engineering:'''
 # Assigning cluster labels to the original dataframe
 rfm_ds_final['ClusterID'] = lbs # Add ClusterID column to the original dataframe
 rfm_ds_final.head()
