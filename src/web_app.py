@@ -14,13 +14,18 @@ import dash_bootstrap_components as dbc
 sns.color_palette("rocket", as_cmap=True)
 "outliers, no_outliers"
 df = pd.DataFrame()
+"code to train models"
 def prepare_outlier_data(df):
-    df_outliers = prepare_dataset(df)
-    return df_outliers
+    df_temp = prepare_dataset(df)
+    return df_temp
 
 def prepare_non_outlier_data(df):
-    df_outliers = process_data(df)
-    return df_outliers
+    df_temp = process_data(df)
+    return df_temp
+
+def train_data(df):
+    df_temp = create_finalmodel(df)
+    return df_temp
 
 app = dash.Dash(external_stylesheets=[dbc.themes.LUX])
 
@@ -61,9 +66,15 @@ def update_output(contents):
         content_type, content_string = contents.split(',')
         decoded = base64.b64decode(content_string)
         df = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
-        
-        Out = prepare_outlier_data(df)
-        n_Out = prepare_non_outlier_data(Out)
+
+        temp_Out=prepare_outlier_data(df)
+        temp_n_Out=prepare_non_outlier_data(temp_Out)
+
+        temp_Out.to_csv('Out.csv', sep=',', index=False, header=True)
+        temp_n_Out.to_csv('No_Out.csv', sep=',', index=False, header=True)
+
+        Out = train_data(temp_Out)
+        n_Out = train_data(temp_n_Out)
         Out.to_csv('Out.csv', sep=',', index=False, header=True)
         n_Out.to_csv('No_Out.csv', sep=',', index=False, header=True)
         
@@ -75,7 +86,7 @@ def update_output(contents):
             mode = 'markers',
             marker = dict(
                 size = 5,
-                color = Out['Amount'],  # Color by cluster label
+                color = Out['Cluster'],  # Color by cluster label
                 opacity = 0.8,
                 colorscale = 'Viridis'
             )
@@ -88,7 +99,7 @@ def update_output(contents):
             mode ='markers',
             marker = dict(
                 size = 5,
-                color = n_Out['Frequency'],  # Color by cluster label
+                color = n_Out['Cluster'],  # Color by cluster label
                 opacity = 0.8,
                 colorscale = 'Viridis'
             )
