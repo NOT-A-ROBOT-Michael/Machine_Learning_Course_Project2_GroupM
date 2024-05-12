@@ -41,12 +41,16 @@ def getClusters(df):
 
 "returns the final data-model"
 def create_finalmodel(df):
+    # base model
+    df_scaled = df
     # final_model labels
     final_model = make_pipeline(
         StandardScaler(),
         KMeans(n_clusters=3, random_state=42)
     )
     # Predict class labels
-    labels = final_model.fit_predict(df)
-    return labels
+    cluster = final_model.fit_predict(df_scaled)
+
+    df_scaled['Cluster'] = cluster
+    return df_scaled
 "end"
