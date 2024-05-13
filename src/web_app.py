@@ -1,6 +1,7 @@
 import pandas as pd
 import dash
 from dash import dcc, html, Input, Output
+from dash import callback
 import base64
 import io
 import plotly.graph_objs as go
@@ -15,6 +16,7 @@ sns.color_palette("rocket", as_cmap=True)
 "outliers, no_outliers"
 df = pd.DataFrame()
 "code to train models"
+
 def prepare_outlier_data(df):
     df_temp = prepare_dataset(df)
     return df_temp
@@ -27,7 +29,11 @@ def train_data(df):
     df_temp = create_finalmodel(df)
     return df_temp
 
-app = dash.Dash(external_stylesheets=[dbc.themes.LUX])
+"the slider functionallity"
+"app-style"
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+server = app.server
 
 # Define app layout
 app.layout = html.Div([
@@ -52,16 +58,27 @@ app.layout = html.Div([
     ),
     html.Div([
         dcc.Graph(id = 'customer-segments-scatter'),
-        dcc.Graph(id = 'customer-segments-scatter-2')
+        dcc.Graph(id = 'customer-segments-scatter-2'),
     ], style = {'display': 'flex'}),
+    html.H1("Customer Amount:"),
+    html.Div([
+    dcc.Slider(0, 85000, 5000,
+               value=60000,
+               id='my-slider'
+    ),
+    html.Div(id='slider-output-container')
+    ]),
 ])
 
 @app.callback(
-    [Output('customer-segments-scatter', 'figure'),
-     Output('customer-segments-scatter-2', 'figure')],
-    [Input('upload-data', 'contents')]
+    Output('slider-output-container', 'slider-output-container'),
+    Output('customer-segments-scatter', 'figure'),
+    Output('customer-segments-scatter-2', 'figure'),
+    [Input('my-slider', 'value'),
+    Input('upload-data', 'contents')],
 )
-def update_output(contents):
+
+def update_output(value, contents):
     if contents is not None:
         content_type, content_string = contents.split(',')
         decoded = base64.b64decode(content_string)
@@ -77,12 +94,12 @@ def update_output(contents):
         n_Out = train_data(temp_n_Out)
         Out.to_csv('Out.csv', sep=',', index=False, header=True)
         n_Out.to_csv('No_Out.csv', sep=',', index=False, header=True)
+
         
         # Plot 3D scatter plot of customer segments for both graphs
-        fig = go.Figure(data = [go.Scatter3d(
-            x = Out['Recency'],
+        fig = go.Figure(data = [go.Scatter(
+            x = Out['Amount'],
             y = Out['Frequency'],
-            z = Out['Amount'],
             mode = 'markers',
             marker = dict(
                 size = 5,
@@ -92,10 +109,9 @@ def update_output(contents):
             )
         )])
 
-        fig2 = go.Figure(data = [go.Scatter3d(
-            x = n_Out['Recency'],
+        fig2 = go.Figure(data = [go.Scatter(
+            x = n_Out['Amount'],
             y = n_Out['Frequency'],
-            z = n_Out['Amount'],
             mode ='markers',
             marker = dict(
                 size = 5,
@@ -104,13 +120,10 @@ def update_output(contents):
                 colorscale = 'Viridis'
             )
         )])
-        
-
         fig.update_layout(scene = dict(
-                    xaxis_title = 'Recency',
-                    yaxis_title = 'Frequency',
-                    zaxis_title = 'Amount'),
-                title='3D Plot of Recency, Frequency, and Amount - With outliers',
+                    xaxis_title = 'Amount',
+                    yaxis_title = 'Frequency'),
+                title='Scatter Plot of Frequency vs Amount - With outliers',
                 scene_camera=dict(
                         up=dict(x=0, y=0, z=1),
                         center=dict(x=0, y=0, z=0),
@@ -119,12 +132,10 @@ def update_output(contents):
                 width=1000,
                 height=700 
                 )
-        
         fig2.update_layout(scene = dict(
-                    xaxis_title ='Recency',
-                    yaxis_title ='Frequency',
-                    zaxis_title ='Amount'),
-                title ='3D Plot of Recency, Frequency, and Amount - Without outliers',
+                    xaxis_title ='Amount',
+                    yaxis_title ='Frequency'),
+                title ='Scatter Plot of Frequency vs Amount - With no-outliers',
                 scene_camera=dict(
                         up=dict(x=0, y=0, z=1),
                         center=dict(x=0, y=0, z=0),
@@ -133,10 +144,10 @@ def update_output(contents):
                 width=1000,
                 height=700 
                 )
-        
-        return fig, fig2
+        return fig, fig2, {}
+        #'You have selected the customer total amount of "{}"'.format(value)
     else:
-        return {}, {}
+        return {}, {}, {}
 
 # Run the Dash app
 if __name__ == '__main__':
