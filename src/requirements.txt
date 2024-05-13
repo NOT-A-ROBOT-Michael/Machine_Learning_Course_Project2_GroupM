@@ -5,6 +5,3 @@ seaborn
 scikit-learn
 plotly
 dash_bootstrap_components
-prepare_data.py
-preprocess_data.py
-train_models.py
