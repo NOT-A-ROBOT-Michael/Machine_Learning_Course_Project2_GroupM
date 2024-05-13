@@ -155,7 +155,4 @@ def update_output(contents, amount_range, frequency_range):
 # Run the Dash app
 if __name__ == '__main__':
     app.run_server(debug=True)
-<<<<<<< HEAD
-=======
 "end"
->>>>>>> Karl_branch
