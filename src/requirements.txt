@@ -2,7 +2,7 @@ dash==2.17.0
 pandas
 gunicorn
 seaborn
-sklearn
+scikit-learn
 plotly
 dash_bootstrap_components
 base64
