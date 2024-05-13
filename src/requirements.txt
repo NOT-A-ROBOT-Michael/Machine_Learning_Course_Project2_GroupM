@@ -5,6 +5,3 @@ seaborn
 scikit-learn
 plotly
 dash_bootstrap_components
-base64
-io
-datetime
