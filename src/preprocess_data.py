@@ -2,7 +2,7 @@
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
-# local DataFrame
+#local DataFrame
 df = pd.DataFrame()
 """function to process the data"""
 
@@ -22,13 +22,9 @@ def process_data(df):
         Q3 = df['Frequency'].quantile(0.75)
         IQR = Q3-Q1
         rfm_ds_final = df[(df['Frequency'] > Q1 - 1.5*IQR) & (df['Frequency'] < Q3 + 1.5*IQR)]
-        
-        #scaling
-        X = rfm_ds_final[['Amount', 'Frequency', 'Recency']]
-        scaler = MinMaxScaler()
-        rfm_ds_scaled = scaler.fit_transform(X)
-        rfm_ds_scaled = pd.DataFrame(rfm_ds_scaled)
-        rfm_ds_scaled.columns = ['Amount', 'Frequency','Recency']
-        return rfm_ds_scaled
+
+        #Dont need Min-max scaling
+        X = rfm_ds_final
+        return X
 
 "end"
