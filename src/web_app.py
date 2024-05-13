@@ -51,7 +51,7 @@ app.layout = html.Div([
         },
         multiple=False
     ),
-    html.P("Filter based on amount"),
+    html.P("Filter based on amount (USD)"),
     html.Div([
         dcc.RangeSlider(
             id='amount-slider',
@@ -61,7 +61,7 @@ app.layout = html.Div([
             marks={i: str(i) for i in range(0, 10001, 2000)}
         )
     ], style={'marginBottom': '30px'}),
-    html.P("Filter based on frequency"),
+    html.P("Filter based on frequency (days)"),
     html.Div([
         dcc.RangeSlider(
             id='frequency-slider',
