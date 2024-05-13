@@ -28,6 +28,7 @@ def train_data(df):
     return df_temp
 
 app = dash.Dash(external_stylesheets=[dbc.themes.LUX])
+server = app.server
 
 # Define app layout
 app.layout = html.Div([
